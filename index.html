@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum to Sports</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow-x: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* 초기 텍스트 */
+        .initial-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            z-index: 10;
+            opacity: 1;
+            animation: fadeInOut 4s ease-in-out;
+            transition: opacity 0.5s ease;
+        }
+
+        .initial-text.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 최종 텍스트 */
+        .final-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .final-text.visible {
+            opacity: 1;
+        }
+
+        /* 최종 레드 오버레이 */
+        .red-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #dc143c;
+            opacity: 0;
+            z-index: 5;
+            transition: opacity 1s ease;
+        }
+
+        .red-overlay.visible {
+            opacity: 1;
+        }
+
+        .spectrum-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .spectrum-light {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 60vw;
+            height: 100vh;
+            transform: translateX(-50%);
+            background: linear-gradient(
+                180deg,
+                rgba(255, 100, 150, 0) 0%,
+                rgba(255, 150, 100, 0) 15%,
+                rgba(255, 200, 100, 0) 30%,
+                rgba(200, 255, 100, 0) 45%,
+                rgba(100, 255, 150, 0) 60%,
+                rgba(100, 200, 255, 0) 75%,
+                rgba(150, 100, 255, 0) 90%,
+                transparent 100%
+            );
+            filter: blur(50px);
+            animation: pulse 6s ease-in-out infinite alternate;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .spectrum-light.visible {
+            opacity: 0.7;
+        }
+
+        .spectrum-light::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -20%;
+            width: 140%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 80, 120, 0),
+                rgba(255, 120, 80, 0),
+                rgba(255, 180, 80, 0),
+                rgba(180, 255, 80, 0),
+                rgba(80, 255, 120, 0),
+                rgba(80, 180, 255, 0),
+                rgba(120, 80, 255, 0),
+                transparent
+            );
+            filter: blur(80px);
+            animation: wave 8s ease-in-out infinite alternate;
+        }
+
+        .spectrum-light::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 20%,
+                rgba(255, 255, 255, 0) 40%,
+                rgba(255, 255, 255, 0) 60%,
+                rgba(255, 255, 255, 0) 80%,
+                transparent 100%
+            );
+            filter: blur(30px);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            min-height: 500vh;
+            width: 100%;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            30%, 70% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translateX(-50%) scaleY(1) scaleX(1);
+            }
+            100% {
+                transform: translateX(-50%) scaleY(1.1) scaleX(1.2);
+            }
+        }
+
+        @keyframes wave {
+            0% {
+                transform: scaleY(1) translateY(0px);
+            }
+            100% {
+                transform: scaleY(1.05) translateY(-10px);
+            }
+        }
+
+        /* 스크롤에 따른 색상 변화를 위한 CSS 변수 */
+        :root {
+            --base-hue: 280;
+            --hue-shift: 0;
+            --saturation: 85%;
+            --lightness: 65%;
+            --opacity-main: 0.4;
+            --opacity-before: 0.3;
+            --opacity-after: 0.1;
+        }
+
+        .spectrum-light.scroll-active {
+            background: linear-gradient(
+                180deg,
+                hsla(calc(var(--base-hue) + var(--hue-shift)), var(--saturation), var(--lightness), var(--opacity-main)) 0%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 15), var(--saturation), calc(var(--lightness) - 5%), calc(var(--opacity-main) * 0.9)) 15%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 30), var(--saturation), calc(var(--lightness) - 10%), calc(var(--opacity-main) * 0.8)) 30%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 45), var(--saturation), calc(var(--lightness) - 15%), calc(var(--opacity-main) * 0.7)) 45%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 60), var(--saturation), calc(var(--lightness) - 20%), calc(var(--opacity-main) * 0.6)) 60%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 75), var(--saturation), calc(var(--lightness) - 25%), calc(var(--opacity-main) * 0.5)) 75%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 90), var(--saturation), calc(var(--lightness) - 30%), calc(var(--opacity-main) * 0.4)) 90%,
+                transparent 100%
+            );
+            transition: background 0.3s ease;
+        }
+
+        .spectrum-light.scroll-active::before {
+            background: linear-gradient(
+                180deg,
+                hsla(calc(var(--base-hue) + var(--hue-shift) - 10), var(--saturation), calc(var(--lightness) + 5%), var(--opacity-before)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 5), var(--saturation), var(--lightness), calc(var(--opacity-before) * 0.85)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 20), var(--saturation), calc(var(--lightness) - 5%), calc(var(--opacity-before) * 0.7)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 35), var(--saturation), calc(var(--lightness) - 10%), calc(var(--opacity-before) * 0.55)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 50), var(--saturation), calc(var(--lightness) - 15%), calc(var(--opacity-before) * 0.4)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 65), var(--saturation), calc(var(--lightness) - 20%), calc(var(--opacity-before) * 0.25)),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 80), var(--saturation), calc(var(--lightness) - 25%), calc(var(--opacity-before) * 0.1)),
+                transparent
+            );
+            transition: background 0.3s ease;
+        }
+
+        .spectrum-light.scroll-active::after {
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, var(--opacity-after)) 0%,
+                rgba(255, 255, 255, calc(var(--opacity-after) * 0.8)) 20%,
+                rgba(255, 255, 255, calc(var(--opacity-after) * 0.6)) 40%,
+                rgba(255, 255, 255, calc(var(--opacity-after) * 0.4)) 60%,
+                rgba(255, 255, 255, calc(var(--opacity-after) * 0.2)) 80%,
+                transparent 100%
+            );
+        }
+
+        /* 추가 라이트 이펙트 */
+        .light-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .light-particles.visible {
+            opacity: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 35%; left: 80%; animation-delay: 1.5s; }
+        .particle:nth-child(3) { top: 55%; left: 15%; animation-delay: 3s; }
+        .particle:nth-child(4) { top: 75%; left: 85%; animation-delay: 4.5s; }
+        .particle:nth-child(5) { top: 25%; left: 50%; animation-delay: 6s; }
+        .particle:nth-child(6) { top: 65%; left: 30%; animation-delay: 7.5s; }
+        .particle:nth-child(7) { top: 85%; left: 70%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: translateY(-30px) scale(1.5);
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="initial-text" id="initialText">spectrum</div>
+    <div class="final-text" id="finalText">sports for all</div>
+    <div class="red-overlay" id="redOverlay"></div>
+
+    <div class="spectrum-container">
+        <div class="spectrum-light" id="spectrumLight"></div>
+    </div>
+
+    <div class="light-particles" id="lightParticles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="content"></div>
+
+    <script>
+        const spectrumLight = document.getElementById('spectrumLight');
+        const lightParticles = document.getElementById('lightParticles');
+        const initialText = document.getElementById('initialText');
+        const finalText = document.getElementById('finalText');
+        const redOverlay = document.getElementById('redOverlay');
+        const root = document.documentElement;
+        
+        // 색상 진행 (보라색에서 빨간색으로)
+        const colorProgression = [
+            { hue: 280, name: 'purple' },      // 보라
+            { hue: 300, name: 'magenta' },     // 마젠타
+            { hue: 320, name: 'pink' },        // 핑크
+            { hue: 340, name: 'rose' },        // 로즈
+            { hue: 0, name: 'red' },           // 빨강
+            { hue: 10, name: 'red-orange' },   // 빨강-오렌지
+            { hue: 0, name: 'pure-red' }       // 순수한 빨강
+        ];
+        
+        let hasScrolled = false;
+        
+        // 스크롤 이벤트 리스너
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            
+            // 처음 스크롤 시 초기 텍스트 숨기고 스펙트럼 표시
+            if (!hasScrolled && window.scrollY > 50) {
+                hasScrolled = true;
+                initialText.classList.add('hidden');
+                spectrumLight.classList.add('visible');
+                lightParticles.classList.add('visible');
+            }
+            
+            // 색상 진행 계산
+            const colorIndex = Math.min(Math.floor(scrollPercent * colorProgression.length), colorProgression.length - 1);
+            const currentColor = colorProgression[colorIndex];
+            
+            // 같은 색상 그룹 내에서의 미세한 변화
+            const colorProgress = (scrollPercent * colorProgression.length) % 1;
+            const hueShift = (colorProgress - 0.5) * 20; // ±10도
+            
+            // 스크롤 진행에 따른 투명도 증가
+            const opacityMain = Math.min(0.2 + (scrollPercent * 0.6), 0.8); // 0.2 → 0.8
+            const opacityBefore = Math.min(0.1 + (scrollPercent * 0.4), 0.5); // 0.1 → 0.5
+            const opacityAfter = Math.min(0.05 + (scrollPercent * 0.15), 0.2); // 0.05 → 0.2
+            
+            // CSS 변수 업데이트
+            root.style.setProperty('--base-hue', currentColor.hue);
+            root.style.setProperty('--hue-shift', hueShift);
+            root.style.setProperty('--opacity-main', opacityMain);
+            root.style.setProperty('--opacity-before', opacityBefore);
+            root.style.setProperty('--opacity-after', opacityAfter);
+            
+            // 스크롤 활성화 클래스 추가
+            spectrumLight.classList.add('scroll-active');
+            
+            // 스크롤 위치에 따른 추가 효과
+            const intensity = 0.4 + (Math.sin(scrollPercent * Math.PI * 2) * 0.3);
+            const blur = 50 + (Math.cos(scrollPercent * Math.PI * 4) * 20);
+            
+            spectrumLight.style.filter = `blur(${blur}px)`;
+            
+            // 스크롤 끝부분 (90% 이상)에서 레드 오버레이와 최종 텍스트 표시
+            if (scrollPercent >= 0.9) {
+                const endProgress = (scrollPercent - 0.9) / 0.1; // 0 → 1
+                redOverlay.style.opacity = endProgress;
+                finalText.style.opacity = endProgress;
+                
+                // 마지막에는 완전히 빨간색으로
+                if (scrollPercent >= 0.95) {
+                    redOverlay.classList.add('visible');
+                    finalText.classList.add('visible');
+                }
+            } else {
+                redOverlay.classList.remove('visible');
+                finalText.classList.remove('visible');
+                redOverlay.style.opacity = 0;
+                finalText.style.opacity = 0;
+            }
+        });
+
+        // 페이지 로드 시 초기 설정
+        window.addEventListener('load', () => {
+            // 4초 후 자동으로 스펙트럼 표시 (사용자가 스크롤하지 않은 경우)
+            setTimeout(() => {
+                if (!hasScrolled) {
+                    initialText.style.opacity = '0.5';
+                }
+            }, 4000);
+        });
+
+        // 마우스 움직임에 따른 미묘한 효과
+        document.addEventListener('mousemove', (e) => {
+            if (hasScrolled) {
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 10;
+                
+                spectrumLight.style.transform = `translateX(calc(-50% + ${x}px)) translateY(${y}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
