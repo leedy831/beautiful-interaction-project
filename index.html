@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스펙트럼 라이트 이펙트</title>
+    <title>세로형 스펙트럼 라이트 이펙트</title>
     <style>
         * {
             margin: 0;
@@ -29,137 +29,130 @@
 
         .spectrum-light {
             position: absolute;
-            top: 50%;
+            top: 0;
             left: 50%;
-            width: 800px;
-            height: 800px;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            background: radial-gradient(
-                circle,
-                rgba(255, 0, 150, 0.3) 0%,
-                rgba(0, 255, 255, 0.2) 25%,
-                rgba(255, 255, 0, 0.2) 50%,
-                rgba(150, 0, 255, 0.1) 75%,
+            width: 60vw;
+            height: 100vh;
+            transform: translateX(-50%);
+            background: linear-gradient(
+                180deg,
+                rgba(255, 100, 150, 0.4) 0%,
+                rgba(255, 150, 100, 0.35) 15%,
+                rgba(255, 200, 100, 0.3) 30%,
+                rgba(200, 255, 100, 0.25) 45%,
+                rgba(100, 255, 150, 0.2) 60%,
+                rgba(100, 200, 255, 0.15) 75%,
+                rgba(150, 100, 255, 0.1) 90%,
                 transparent 100%
             );
-            filter: blur(40px);
-            animation: pulse 4s ease-in-out infinite alternate;
+            filter: blur(50px);
+            animation: pulse 6s ease-in-out infinite alternate;
         }
 
         .spectrum-light::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(
-                from 0deg,
-                #ff0080,
-                #00ffff,
-                #ffff00,
-                #8000ff,
-                #ff4000,
-                #00ff80,
-                #ff0080
+            top: 0;
+            left: -20%;
+            width: 140%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 80, 120, 0.3),
+                rgba(255, 120, 80, 0.25),
+                rgba(255, 180, 80, 0.2),
+                rgba(180, 255, 80, 0.15),
+                rgba(80, 255, 120, 0.1),
+                rgba(80, 180, 255, 0.08),
+                rgba(120, 80, 255, 0.05),
+                transparent
             );
-            border-radius: 50%;
-            opacity: 0.1;
-            filter: blur(60px);
-            animation: rotate 20s linear infinite;
+            filter: blur(80px);
+            animation: wave 8s ease-in-out infinite alternate;
         }
 
         .spectrum-light::after {
             content: '';
             position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 60%;
-            height: 60%;
-            background: radial-gradient(
-                circle,
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
                 rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, 0.05) 30%,
-                transparent 70%
+                rgba(255, 255, 255, 0.08) 20%,
+                rgba(255, 255, 255, 0.06) 40%,
+                rgba(255, 255, 255, 0.04) 60%,
+                rgba(255, 255, 255, 0.02) 80%,
+                transparent 100%
             );
-            border-radius: 50%;
-            filter: blur(20px);
+            filter: blur(30px);
         }
 
         .content {
             position: relative;
             z-index: 2;
-            min-height: 400vh;
-            padding: 100px 50px;
-        }
-
-        .section {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 2rem;
-            text-align: center;
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            margin: 50px 0;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 500vh;
+            width: 100%;
         }
 
         @keyframes pulse {
             0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.6;
+                transform: translateX(-50%) scaleY(1) scaleX(1);
+                opacity: 0.7;
             }
             100% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.3;
+                transform: translateX(-50%) scaleY(1.1) scaleX(1.2);
+                opacity: 0.4;
             }
         }
 
-        @keyframes rotate {
+        @keyframes wave {
             0% {
-                transform: rotate(0deg);
+                transform: scaleY(1) translateY(0px);
             }
             100% {
-                transform: rotate(360deg);
+                transform: scaleY(1.05) translateY(-10px);
             }
         }
 
         /* 스크롤에 따른 색상 변화를 위한 CSS 변수 */
         :root {
-            --hue: 0;
-            --saturation: 80%;
-            --lightness: 60%;
+            --base-hue: 320;
+            --hue-shift: 0;
+            --saturation: 85%;
+            --lightness: 65%;
         }
 
         .spectrum-light.scroll-active {
-            background: radial-gradient(
-                circle,
-                hsla(var(--hue), var(--saturation), var(--lightness), 0.3) 0%,
-                hsla(calc(var(--hue) + 60), var(--saturation), var(--lightness), 0.2) 25%,
-                hsla(calc(var(--hue) + 120), var(--saturation), var(--lightness), 0.2) 50%,
-                hsla(calc(var(--hue) + 180), var(--saturation), var(--lightness), 0.1) 75%,
+            background: linear-gradient(
+                180deg,
+                hsla(calc(var(--base-hue) + var(--hue-shift)), var(--saturation), var(--lightness), 0.4) 0%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 15), var(--saturation), calc(var(--lightness) - 5%), 0.35) 15%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 30), var(--saturation), calc(var(--lightness) - 10%), 0.3) 30%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 45), var(--saturation), calc(var(--lightness) - 15%), 0.25) 45%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 60), var(--saturation), calc(var(--lightness) - 20%), 0.2) 60%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 75), var(--saturation), calc(var(--lightness) - 25%), 0.15) 75%,
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 90), var(--saturation), calc(var(--lightness) - 30%), 0.1) 90%,
                 transparent 100%
             );
-            transition: background 0.3s ease;
+            transition: background 0.5s ease;
         }
 
         .spectrum-light.scroll-active::before {
-            background: conic-gradient(
-                from 0deg,
-                hsl(var(--hue), var(--saturation), var(--lightness)),
-                hsl(calc(var(--hue) + 60), var(--saturation), var(--lightness)),
-                hsl(calc(var(--hue) + 120), var(--saturation), var(--lightness)),
-                hsl(calc(var(--hue) + 180), var(--saturation), var(--lightness)),
-                hsl(calc(var(--hue) + 240), var(--saturation), var(--lightness)),
-                hsl(calc(var(--hue) + 300), var(--saturation), var(--lightness)),
-                hsl(var(--hue), var(--saturation), var(--lightness))
+            background: linear-gradient(
+                180deg,
+                hsla(calc(var(--base-hue) + var(--hue-shift) - 10), var(--saturation), calc(var(--lightness) + 5%), 0.3),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 5), var(--saturation), var(--lightness), 0.25),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 20), var(--saturation), calc(var(--lightness) - 5%), 0.2),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 35), var(--saturation), calc(var(--lightness) - 10%), 0.15),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 50), var(--saturation), calc(var(--lightness) - 15%), 0.1),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 65), var(--saturation), calc(var(--lightness) - 20%), 0.08),
+                hsla(calc(var(--base-hue) + var(--hue-shift) + 80), var(--saturation), calc(var(--lightness) - 25%), 0.05),
+                transparent
             );
-            transition: background 0.3s ease;
+            transition: background 0.5s ease;
         }
 
         /* 추가 라이트 이펙트 */
@@ -175,27 +168,29 @@
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.6);
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.4);
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            animation: float 8s ease-in-out infinite;
         }
 
-        .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { top: 80%; left: 20%; animation-delay: 1s; }
-        .particle:nth-child(3) { top: 40%; left: 80%; animation-delay: 2s; }
-        .particle:nth-child(4) { top: 70%; left: 70%; animation-delay: 3s; }
-        .particle:nth-child(5) { top: 30%; left: 50%; animation-delay: 4s; }
+        .particle:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 35%; left: 80%; animation-delay: 1.5s; }
+        .particle:nth-child(3) { top: 55%; left: 15%; animation-delay: 3s; }
+        .particle:nth-child(4) { top: 75%; left: 85%; animation-delay: 4.5s; }
+        .particle:nth-child(5) { top: 25%; left: 50%; animation-delay: 6s; }
+        .particle:nth-child(6) { top: 65%; left: 30%; animation-delay: 7.5s; }
+        .particle:nth-child(7) { top: 85%; left: 70%; animation-delay: 2s; }
 
         @keyframes float {
             0%, 100% {
                 transform: translateY(0px) scale(1);
-                opacity: 0.3;
+                opacity: 0.2;
             }
             50% {
-                transform: translateY(-20px) scale(1.2);
-                opacity: 0.8;
+                transform: translateY(-30px) scale(1.5);
+                opacity: 0.6;
             }
         }
     </style>
@@ -211,43 +206,55 @@
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
 
-    <div class="content">
-        <div class="section">
-            <h1>스펙트럼 라이트 이펙트</h1>
-        </div>
-        <div class="section">
-            <p>스크롤을 내려보세요<br>색상이 은은하게 변화합니다</p>
-        </div>
-        <div class="section">
-            <p>무지개 빛깔의 그라디언트가<br>부드럽게 흘러갑니다</p>
-        </div>
-        <div class="section">
-            <p>검은 배경 위에서<br>스펙트럼이 춤을 춥니다</p>
-        </div>
-    </div>
+    <div class="content"></div>
 
     <script>
         const spectrumLight = document.getElementById('spectrumLight');
         const root = document.documentElement;
         
+        // 색상 톤 배열 (비슷한 색상 그룹들)
+        const colorTones = [
+            { base: 320, name: 'magenta-pink' },      // 마젠타-핑크
+            { base: 340, name: 'pink-red' },          // 핑크-레드
+            { base: 10, name: 'red-orange' },         // 레드-오렌지
+            { base: 30, name: 'orange-yellow' },      // 오렌지-옐로우
+            { base: 60, name: 'yellow-lime' },        // 옐로우-라임
+            { base: 90, name: 'lime-green' },         // 라임-그린
+            { base: 120, name: 'green-teal' },        // 그린-틸
+            { base: 150, name: 'teal-cyan' },         // 틸-시안
+            { base: 180, name: 'cyan-sky' },          // 시안-스카이
+            { base: 210, name: 'sky-blue' },          // 스카이-블루
+            { base: 240, name: 'blue-purple' },       // 블루-퍼플
+            { base: 270, name: 'purple-violet' },     // 퍼플-바이올렛
+            { base: 300, name: 'violet-magenta' }     // 바이올렛-마젠타
+        ];
+        
         // 스크롤 이벤트 리스너
         window.addEventListener('scroll', () => {
             const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
             
-            // 0부터 360까지의 색조값 계산
-            const hue = Math.floor(scrollPercent * 360);
+            // 색상 톤 인덱스 계산 (0-12)
+            const toneIndex = Math.floor(scrollPercent * colorTones.length);
+            const currentTone = colorTones[Math.min(toneIndex, colorTones.length - 1)];
+            
+            // 같은 톤 내에서의 미세한 변화 (±20도)
+            const toneProgress = (scrollPercent * colorTones.length) % 1;
+            const hueShift = (toneProgress - 0.5) * 40; // -20 ~ +20
             
             // CSS 변수 업데이트
-            root.style.setProperty('--hue', hue);
+            root.style.setProperty('--base-hue', currentTone.base);
+            root.style.setProperty('--hue-shift', hueShift);
             
             // 스크롤 활성화 클래스 추가
             spectrumLight.classList.add('scroll-active');
             
             // 스크롤 위치에 따른 추가 효과
-            const intensity = 0.3 + (scrollPercent * 0.4); // 0.3 ~ 0.7
-            const blur = 40 + (scrollPercent * 20); // 40px ~ 60px
+            const intensity = 0.4 + (Math.sin(scrollPercent * Math.PI * 2) * 0.2); // 0.2 ~ 0.6
+            const blur = 50 + (Math.cos(scrollPercent * Math.PI * 4) * 15); // 35px ~ 65px
             
             spectrumLight.style.filter = `blur(${blur}px)`;
             spectrumLight.style.opacity = intensity;
@@ -260,10 +267,10 @@
 
         // 마우스 움직임에 따른 미묘한 효과
         document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) * 100;
-            const y = (e.clientY / window.innerHeight) * 100;
+            const x = (e.clientX / window.innerWidth - 0.5) * 20; // -10px ~ +10px
+            const y = (e.clientY / window.innerHeight - 0.5) * 10; // -5px ~ +5px
             
-            spectrumLight.style.transform = `translate(calc(-50% + ${(x - 50) * 0.1}px), calc(-50% + ${(y - 50) * 0.1}px))`;
+            spectrumLight.style.transform = `translateX(calc(-50% + ${x}px)) translateY(${y}px)`;
         });
     </script>
 </body>
